@@ -1,0 +1,16 @@
+*.retry
+
+# build products...
+*.py[co]
+build
+# Emacs backup files...
+*~
+.\#*
+# Mac OS X 
+.DS_Store
+# Sublime 
+*.sublime-project
+*.sublime-workspace
+
+# for ansible
+*.retry
