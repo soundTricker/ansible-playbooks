@@ -14,6 +14,7 @@ vpc_subnets:
     - cidr: 10.0.4.0/24
       az: ap-northeast-1c
       resource_tags: { "Name":"PrivateC"}
+subnet_map:
 vpc_internet_gateway: "yes"
 vpc_route_tables:
     - subnets:
@@ -22,12 +23,38 @@ vpc_route_tables:
       routes:
         - dest: 0.0.0.0/0
           gw: igw
-    - subnets:
-        - 10.0.3.0/24
-        - 10.0.4.0/24
-      routes:
-        - dest: 0.0.0.0/0
-          gw: igw
 vpc_public_subnet: 
     - 10.0.1.0/24
     - 10.0.2.0/24
+vpc_nat:
+  ami_id: ami-cd43d9cc
+  instance_type: t1.micro
+
+instances:
+  - instance_type: t2.micro
+    image: ami-29dc9228
+    assign_public_ip: yes
+    instance_tags: 
+      Name: web
+    subnet: PublicC
+
+  - instance_type: t2.micro
+    image: ami-29dc9228
+    assign_public_ip: yes
+    instance_tags: 
+      Name: web
+    subnet: PublicC
+
+  - instance_type: t2.micro
+    image: ami-29dc9228
+    assign_public_ip: no
+    instance_tags: 
+      Name: DB
+    subnet: PrivateC
+
+  - instance_type: t2.micro
+    image: ami-29dc9228
+    assign_public_ip: no
+    instance_tags: 
+      Name: DB
+    subnet: PrivateC
