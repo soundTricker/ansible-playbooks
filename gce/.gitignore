@@ -1,3 +1,4 @@
 credentials/*
 !.gitkeep
 vars/gce_auth.yml
+test.py
