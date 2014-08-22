@@ -1,0 +1,8 @@
+{% set val = '' %}
+{% for i in vpc.subnets %}
+{% if loop.last %}
+{% set val = val + '"' + i.resource_tags.Name + '": "' + i.id + '"' %}
+{{ '{' + val + '}' }}
+{% endif %}
+{% set val = val + '"' + i.resource_tags.Name + '": "' + i.id + '", ' %}
+{% endfor %}

@@ -14,6 +14,7 @@ vpc_subnets:
     - cidr: 10.0.4.0/24
       az: ap-northeast-1c
       resource_tags: { "Name":"PrivateC"}
+subnet_map:
 vpc_internet_gateway: "yes"
 vpc_route_tables:
     - subnets:
@@ -22,56 +23,38 @@ vpc_route_tables:
       routes:
         - dest: 0.0.0.0/0
           gw: igw
-    - subnets:
-        - 10.0.3.0/24
-        - 10.0.4.0/24
-      routes:
-        - dest: 0.0.0.0/0
-          gw: igw
 vpc_public_subnet: 
     - 10.0.1.0/24
     - 10.0.2.0/24
-vpc_nat_instance_id: ami-4f9fee26 
-vpc_nat_instance_type: t1.micro
-vpc_group:
-    name: dev_vpc
-    desc: the security group for the dev vpc
-    rules:
-      - proto: tcp
-        from_port: 22
-        to_port: 22
-        cidr_ip: 0.0.0.0/0
+vpc_nat:
+  ami_id: ami-cd43d9cc
+  instance_type: t1.micro
 
-vpc_instances:
-  - instance_type: m1.medium
-    image: 
-    keypair: 
-    group: dev_vpc
+instances:
+  - instance_type: t2.micro
+    image: ami-29dc9228
+    assign_public_ip: yes
     instance_tags: 
-        Name: dev_db
-   # exact_count: 2
-   # count_tag: 
-   #     Name: dev_db_count
-    subnet: 10.0.3.0/24
+      Name: web
+    subnet: PublicC
 
-  - instance_type: m1.medium
-    image: 
-    keypair: 
-    group: dev_vpc
+  - instance_type: t2.micro
+    image: ami-29dc9228
+    assign_public_ip: yes
     instance_tags: 
-        Name: dev_app
-   # exact_count: 2
-   # count_tag: 
-   #     Name: dev_app_count
-    subnet: 10.0.2.0/24
+      Name: web
+    subnet: PublicC
 
-  - instance_type: m1.medium
-    image: 
-    keypair: 
-    group: dev_proxy
+  - instance_type: t2.micro
+    image: ami-29dc9228
+    assign_public_ip: no
     instance_tags: 
-        Name: dev_proxy
-   # exact_count: 2
-   # count_tag: 
-   #     Name: dev_proxy_count
-    subnet: 10.0.1.0/24
+      Name: DB
+    subnet: PrivateC
+
+  - instance_type: t2.micro
+    image: ami-29dc9228
+    assign_public_ip: no
+    instance_tags: 
+      Name: DB
+    subnet: PrivateC

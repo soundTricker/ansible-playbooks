@@ -1,0 +1,29 @@
+---
+- name: Create NAT Instance
+  ec2:
+    region: "{{ ec2_region }}"
+    keypair:  "{{ ec2_keypair }}"
+    instance_type: "{{ vpc_nat.instance_type }}"
+    image: "{{ vpc_nat.ami_id }}"
+    vpc_subnet_id: "{{ subnet_map.PublicA }}"
+    instance_tags: {"Name" : "NAT"}
+    wait: true
+    exact_count: 1
+  register: nat
+  when: vpc.changed and vpc_internet_gateway
+
+- name: Get the route table entry for the main table.
+  shell: >
+    aws ec2 describe-route-tables --filters Name=vpc-id,Values={{ vpc.vpc_id }} Name=association.main,Values=true | grep ROUTETABLES | awk '{ print $2 }'
+  register: main_rt
+  when: vpc.changed and vpc_internet_gateway
+
+- name: Set the fact for NAT Instance variable
+  set_fact: nat_instance_id="{{ nat.tagged_instances[0].id }}"
+  when: vpc.changed and vpc_internet_gateway
+
+- name: Set the gateway to nat interface.
+  shell: >
+    aws ec2 create-route --route-table-id {{ main_rt.stdout}} --destination-cidr-block 0.0.0.0/0 --instance-id {{nat_instance_id}}
+  when: vpc.changed and vpc_internet_gateway
+
