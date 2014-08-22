@@ -1,0 +1,3 @@
+credentials/*
+!.gitkeep
+vars/gce_auth.yml
